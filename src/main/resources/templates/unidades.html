@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Consulta de unidades</title>
+    <link rel="stylesheet" th:href="@{/css/estilos.css}">
+</head>
+<body>
+    <main class="contenedor">
+        <span class="empresa">TRANSMDICAS</span>
+
+        <h1>Consulta de unidades</h1>
+        <p
+    class="mensaje-exito"
+    th:if="${mensajeExito != null}"
+    th:text="${mensajeExito}"
+></p>
+
+<p>
+    <a th:href="@{/unidades/nueva}">Registrar nueva unidad</a>
+</p>
+
+        <p>Ingresa una placa para consultar sus datos.</p>
+
+        <section class="tarjeta">
+            <form th:action="@{/unidades}" method="get">
+                <label for="placa">Placa de la unidad</label>
+
+                <input
+                    type="text"
+                    id="placa"
+                    name="placa"
+                    th:value="${placa}"
+                    placeholder="Ej. ABC123"
+                    required
+                >
+
+                <button type="submit">Buscar</button>
+            </form>
+        </section>
+
+        <section class="tarjeta" th:if="${unidad != null}">
+            <h2>Datos de la unidad</h2>
+
+            <p>
+                <strong>Placa:</strong>
+                <span th:text="${unidad.placa}"></span>
+            </p>
+
+            <p>
+                <strong>Marca:</strong>
+                <span th:text="${unidad.marca}"></span>
+            </p>
+
+            <p>
+                <strong>Operación:</strong>
+                <span th:text="${unidad.operacion}"></span>
+            </p>
+
+            <p>
+                <strong>Ruta:</strong>
+                <span th:text="${unidad.ruta}"></span>
+            </p>
+        </section>
+
+        <p th:if="${busquedaRealizada and unidad == null}">
+            No se encontró una unidad con la placa
+            <strong th:text="${placa}"></strong>.
+        </p>
+
+        <p>Catálogo temporal con datos de prueba.</p>
+
+        <a th:href="@{/}">Volver al inicio</a>
+    </main>
+</body>
+</html>

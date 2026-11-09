@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+
+  <title th:text="|${documento.numero} · ${documento.tipo.titulo}|">
+    Documento
+  </title>
+
+  <link rel="stylesheet" th:href="@{/css/modulo.css}">
+</head>
+
+<body class="preview-body">
+
+  <div class="preview-toolbar">
+
+    <div>
+      <h2 th:text="${documento.generado
+          ? 'Documento generado'
+          : 'Vista previa del borrador'}">
+      </h2>
+
+      <p>
+        También puedes imprimir la vista:
+        <strong>Ctrl + P</strong> → Guardar como PDF.
+      </p>
+    </div>
+
+    <div class="toolbar-actions">
+
+      <form
+          th:if="${temporal}"
+          th:action="@{/documentos/procesar}"
+          th:object="${documento}"
+          method="post">
+
+        <input type="hidden" name="_csrf" th:value="${csrf}">
+
+        <div th:replace="~{modulo/ocultos :: todos}"></div>
+
+        <button
+            class="btn"
+            name="accion"
+            value="actualizar">
+          Volver al formulario
+        </button>
+
+      </form>
+
+      <a
+          class="btn"
+          th:if="${!temporal and !documento.generado}"
+          th:href="@{/documentos/{id}(id=${documento.id})}">
+        Continuar borrador
+      </a>
+
+      <a class="btn" th:href="@{/registros}">
+        Registros guardados
+      </a>
+
+      <!-- PDF con el formato anterior y sus observaciones -->
+      <a
+          class="btn primary"
+          th:if="${!temporal}"
+          th:href="@{/documentos/{id}/pdf(id=${documento.id})}">
+        Descargar PDF anterior
+      </a>
+
+      <!-- PDF auditado de inspección -->
+      <a
+          class="btn"
+          th:if="${!temporal and documento.tipo.name() == 'INSPECCION'}"
+          th:href="@{/documentos/{id}/excel-inspeccion-auditado(id=${documento.id})}">
+        Descargar PDF auditado
+      </a>
+
+      <!-- PDF auditado de cambio de neumáticos -->
+      <a
+          class="btn"
+          th:if="${!temporal and documento.tipo.name() == 'CAMBIO'}"
+          th:href="@{/documentos/{id}/excel-cambio-auditado(id=${documento.id})}">
+        Descargar PDF auditado
+      </a>
+
+      <form
+          th:if="${!temporal}"
+          th:action="@{/documentos/{id}/duplicar(id=${documento.id})}"
+          method="post">
+
+        <input type="hidden" name="_csrf" th:value="${csrf}">
+
+        <button class="btn primary">
+          Duplicar como nuevo
+        </button>
+
+      </form>
+
+    </div>
+  </div>
+
+  <div class="preview-message">
+    <div th:replace="~{modulo/layout :: mensaje}"></div>
+  </div>
+
+  <article
+      class="paper"
+      th:classappend="${!documento.generado} ? 'draft'"
+      th:with="
+          cam=${documento.tipo.name() == 'CAMBIO'},
+          ins=${documento.tipo.name() == 'INSPECCION'}
+      ">
+
+    <div class="paper-header">
+
+      <div class="paper-brand">
+        TRANSMDICAS
+        <small>MANTENIMIENTO DE FLOTA</small>
+      </div>
+
+      <h1 th:text="${documento.tipo.papel}"></h1>
+
+      <div>
+        <strong th:text="${documento.tipo.codigoImpreso}"></strong>
+        <br>
+
+        Versión:
+        <span th:text="${documento.tipo.version}"></span>
+        <br>
+
+        <span th:text="${documento.numero}"></span>
+      </div>
+
+    </div>
+
+    <p class="draft-label" th:unless="${documento.generado}">
+      BORRADOR · DOCUMENTO PENDIENTE DE VALIDACIÓN
+    </p>
+
+    <div class="paper-general">
+
+      <p>
+        <b>Placa:</b>
+        <span th:text="${documento.placa}"></span>
+      </p>
+
+      <p>
+        <b>Fecha:</b>
+        <span th:text="${documento.fecha}"></span>
+      </p>
+
+      <p>
+        <b>Operador:</b>
+        <span th:text="${documento.operador}"></span>
+      </p>
+
+      <p>
+        <b>Kilometraje:</b>
+        <span th:text="${documento.kilometraje}"></span>
+      </p>
+
+      <p>
+        <b>Marca unidad:</b>
+        <span th:text="${documento.marcaUnidad}"></span>
+      </p>
+
+      <p th:unless="${ins}">
+        <b>OT:</b>
+        <span th:text="${documento.ot}"></span>
+      </p>
+
+      <p>
+        <b>Operación:</b>
+        <span th:text="${documento.operacion}"></span>
+      </p>
+
+      <p>
+        <b>Ruta:</b>
+        <span th:text="${documento.ruta}"></span>
+      </p>
+
+      <p>
+        <b>Semirremolque:</b>
+        <span th:text="${documento.semirremolque}"></span>
+      </p>
+
+      <p th:if="${cam}">
+        <b>Técnico:</b>
+        <span th:text="${documento.responsable1}"></span>
+      </p>
+
+      <p th:if="${cam}">
+        <b>Hora inicio:</b>
+        <span th:text="${documento.inicio}"></span>
+
+        ·
+
+        <b>Hora fin:</b>
+        <span th:text="${documento.fin}"></span>
+      </p>
+
+    </div>
+
+    <h3 th:text="${cam
+        ? 'NEUMÁTICOS RETIRADOS'
+        : ins
+          ? 'INSPECCIÓN POR POSICIÓN'
+          : 'DETALLE DEL REQUERIMIENTO'}">
+    </h3>
+
+    <div
+        th:replace="~{modulo/impresion-tabla :: tabla(${documento.filas},false)}">
+    </div>
+
+    <div th:if="${cam}">
+
+      <h3>NEUMÁTICOS MONTADOS</h3>
+
+      <div
+          th:replace="~{modulo/impresion-tabla :: tabla(${documento.filas},true)}">
+      </div>
+
+    </div>
+
+    <div th:if="${ins and documento.rotaciones}">
+
+      <h3>ROTACIONES / CAMBIOS</h3>
+
+      <div
+          th:replace="~{modulo/impresion-tabla :: tabla(${documento.despues},false)}">
+      </div>
+
+    </div>
+
+    <!-- Observaciones automáticas de la vista anterior -->
+    <section
+        th:if="${ins or cam}"
+        class="paper-observaciones"
+        aria-labelledby="titulo-observaciones">
+
+      <table class="paper-table">
+
+        <thead>
+          <tr>
+            <th
+                id="titulo-observaciones"
+                class="observaciones-titulo"
+                colspan="12">
+              OBSERVACIONES
+            </th>
+          </tr>
+        </thead>
+
+        <th:block th:each="seccion : ${observacionesNeumaticos}">
+
+          <tbody th:each="bloque, estado : ${seccion.bloques()}">
+
+            <tr th:if="${estado.first and !seccion.titulo().isEmpty()}">
+              <th
+                  class="observaciones-seccion"
+                  colspan="12"
+                  th:text="${seccion.titulo()}">
+              </th>
+            </tr>
+
+            <tr>
+              <th
+                  class="observaciones-posicion"
+                  scope="col"
+                  th:each="celda : ${bloque}"
+                  th:text="${celda.encabezado()}">
+              </th>
+            </tr>
+
+            <tr>
+              <td
+                  class="observaciones-lectura"
+                  th:each="celda : ${bloque}"
+                  th:text="${celda.texto()}">
+              </td>
+            </tr>
+
+          </tbody>
+
+        </th:block>
+
+        <tbody
+            aria-label="Observaciones manuales"
+            class="observaciones-manuales">
+
+          <tr>
+            <td
+                colspan="12"
+                th:text="${documento.observaciones}">
+            </td>
+          </tr>
+
+          <tr>
+            <td colspan="12"></td>
+          </tr>
+
+          <tr>
+            <td colspan="12"></td>
+          </tr>
+
+        </tbody>
+
+      </table>
+    </section>
+
+    <th:block th:unless="${ins or cam}">
+
+      <h3>OBSERVACIONES</h3>
+
+      <div
+          class="paper-notes"
+          th:text="${documento.observaciones}">
+      </div>
+
+    </th:block>
+
+    <div class="signatures">
+
+      <div th:each="rol,it : ${documento.tipo.roles}">
+
+        <span th:text="${documento.responsables[it.index]}"></span>
+
+        <div class="signature-line"></div>
+
+        <b th:text="${rol}"></b>
+
+        <small>Firma</small>
+
+      </div>
+
+    </div>
+
+    <p class="paper-footnote">
+
+      <span th:text="${documento.numero}"></span>
+
+      · Número interno del módulo. Formato digital adaptado;
+      requiere validación de la empresa para su uso oficial.
+      Los nombres no constituyen firmas electrónicas.
+
+      <span th:if="${documento.tipo.name() == 'REQUERIMIENTO'}">
+        Código y versión del requerimiento pendientes de confirmar.
+      </span>
+
+    </p>
+
+  </article>
+
+</body>
+</html>

@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Eliminar registro</title>
+    <link rel="stylesheet" th:href="@{/css/modulo.css}">
+</head>
+
+<body>
+    <aside th:replace="~{modulo/layout :: sidebar}"></aside>
+    <div class="workspace">
+        <header th:replace="~{modulo/layout :: topbar}"></header>
+        <main>
+            <section class="panel">
+                <h1>Eliminar registro</h1>
+                <p>Se eliminará <strong th:text="${documento.numero}"></strong> y sus posiciones. Esta acción no se
+                    puede deshacer desde el módulo.</p>
+                <form th:action="@{/documentos/{id}/eliminar(id=${documento.id})}" method="post"><input type="hidden"
+                        name="_csrf" th:value="${csrf}"><input type="hidden" name="version"
+                        th:value="${documento.version}"><a class="btn" th:href="@{/registros}">Cancelar</a><button
+                        class="btn danger-fill">Eliminar registro</button></form>
+            </section>
+        </main>
+    </div>
+</body>
+
+</html>

@@ -1,0 +1,29 @@
+<!DOCTYPE html><html lang="es" xmlns:th="http://www.thymeleaf.org"><body>
+<div th:fragment="tabla(grupo,lista)" class="table-wrap" th:with="ins=${documento.tipo.name() == 'INSPECCION'},cam=${documento.tipo.name() == 'CAMBIO'},req=${documento.tipo.name() == 'REQUERIMIENTO'}">
+ <table class="entry-table"><thead><tr><th th:text="${req ? 'Ítem' : 'Pos.'}"></th><th th:text="${cam ? 'Código retirado' : 'Código interno'}"></th><th>Marca <small>Auto</small></th><th>Diseño / medida <small>Auto</small></th>
+ <th th:unless="${cam}">R/N</th><th th:unless="${req}">R1 mm</th><th th:unless="${req}">R2 mm</th><th th:unless="${req}">Prom. <small>Auto</small></th>
+ <th th:if="${ins}">PSI</th><th th:if="${ins}">Aro C/M</th><th th:if="${ins}">Estado</th><th th:if="${ins}">Sin tapa</th>
+ <th th:if="${cam}">Disposición</th><th th:if="${cam}">Código montado</th><th th:if="${cam}">Marca / diseño <small>Auto</small></th><th th:if="${cam}">Medida <small>Auto</small></th><th th:if="${cam}">R3 mm</th><th th:if="${cam}">R4 mm</th><th th:if="${cam}">Prom. <small>Auto</small></th>
+ <th th:if="${req}">Cantidad</th><th th:if="${req}">Conformidad</th><th th:unless="${ins}"></th></tr></thead>
+ <tbody><tr th:each="r,it : ${lista}" th:id="${grupo == 'filas' ? 'fila-principal-' + it.count : 'fila-rotacion-' + it.count}">
+ <td><input th:if="${cam}" type="number" min="1" max="22" step="1" th:field="*{__${grupo}__[__${it.index}__].posicion}" aria-label="Posición"><span class="pos" th:unless="${cam}" th:text="${it.count}"></span></td>
+ <td><input class="code-input" data-busqueda="neumaticos" th:field="*{__${grupo}__[__${it.index}__].codigo}" placeholder="Código…" aria-label="Código de neumático"></td>
+ <td><span class="auto-text" data-auto="marca" th:text="${#strings.isEmpty(r.marca) ? '—' : r.marca}"></span></td><td><span class="auto-text" data-auto="diseno" th:text="${#strings.isEmpty(r.diseno) ? '—' : r.diseno}"></span><small class="auto-text" data-auto="medida" th:text="${r.medida}"></small></td>
+ <td th:unless="${cam}"><select th:field="*{__${grupo}__[__${it.index}__].rn}" aria-label="R/N"><option value="">—</option><option value="N">N</option><option value="R">R</option></select></td>
+ <td th:unless="${req}"><input type="number" min="0" max="99" step="0.1" th:field="*{__${grupo}__[__${it.index}__].r1}" aria-label="R1 en milímetros"></td>
+ <td th:unless="${req}"><input type="number" min="0" max="99" step="0.1" th:field="*{__${grupo}__[__${it.index}__].r2}" aria-label="R2 en milímetros"></td>
+ <td th:unless="${req}"><output class="average" data-auto="promedio" th:text="${r.promedio == null ? '—' : r.promedio}"></output></td>
+ <td th:if="${ins}"><input type="number" min="0" max="250" step="0.1" th:field="*{__${grupo}__[__${it.index}__].presion}" aria-label="Presión PSI"></td>
+ <td th:if="${ins}"><select th:field="*{__${grupo}__[__${it.index}__].aro}" aria-label="Aro"><option value="">—</option><option value="C">C</option><option value="M">M</option></select></td>
+ <td th:if="${ins}"><input th:field="*{__${grupo}__[__${it.index}__].condicion}" maxlength="250" aria-label="Estado del neumático"></td>
+ <td th:if="${ins}"><select th:field="*{__${grupo}__[__${it.index}__].sinTapa}" aria-label="Válvula sin tapa"><option value="">—</option><option value="SI">Sí</option><option value="NO">No</option></select></td>
+ <td th:if="${cam}"><select th:field="*{__${grupo}__[__${it.index}__].disposicion}" aria-label="Disposición del retirado"><option value="">—</option><option th:each="opcion : ${disposiciones}" th:value="${opcion}" th:text="${opcion}"></option><option th:if="${!#strings.isEmpty(r.disposicion) and !#lists.contains(disposiciones,r.disposicion)}" th:value="${r.disposicion}" th:text="${r.disposicion + ' (registro anterior)'}"></option></select></td>
+ <td th:if="${cam}"><input class="code-input" data-busqueda="neumaticos" th:field="*{__${grupo}__[__${it.index}__].codigoNuevo}" placeholder="Código…" aria-label="Código montado"></td>
+ <td th:if="${cam}"><span class="auto-text" data-auto="marcaNueva" th:text="${r.marcaNueva}"></span><small class="auto-text" data-auto="disenoNuevo" th:text="${r.disenoNuevo}"></small></td><td th:if="${cam}"><span class="auto-text" data-auto="medidaNueva" th:text="${r.medidaNueva}"></span></td>
+ <td th:if="${cam}"><input type="number" min="0" max="99" step="0.1" th:field="*{__${grupo}__[__${it.index}__].n1}" aria-label="R3 del montado"></td>
+ <td th:if="${cam}"><input type="number" min="0" max="99" step="0.1" th:field="*{__${grupo}__[__${it.index}__].n2}" aria-label="R4 del montado"></td><td th:if="${cam}"><output class="average" data-auto="promedioNuevo" th:text="${r.promedioNuevo == null ? '—' : r.promedioNuevo}"></output></td>
+ <td th:if="${req}"><input type="number" min="1" max="100" step="1" th:field="*{__${grupo}__[__${it.index}__].cantidad}" aria-label="Cantidad"></td>
+ <td th:if="${req}"><select th:field="*{__${grupo}__[__${it.index}__].conformidad}" aria-label="Conformidad"><option value="">—</option><option value="Pendiente">Pendiente</option><option value="Conforme">Conforme</option><option value="No conforme">No conforme</option></select></td>
+ <td th:unless="${ins}"><button class="icon-btn" type="submit" name="quitar" th:value="${it.index}" formnovalidate aria-label="Quitar fila">×</button></td>
+ </tr></tbody></table>
+</div></body></html>

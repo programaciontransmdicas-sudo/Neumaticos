@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>No se pudo abrir la página</title>
+    <link rel="stylesheet" th:href="@{/css/modulo.css}">
+</head>
+
+<body class="preview-body">
+    <main class="panel">
+        <h1>No se pudo completar la operación</h1>
+        <p th:text="|Estado ${status}|"></p>
+        <p>Revisa la dirección o vuelve a abrir el formulario. Si la sesión expiró, recarga la página antes de enviar.
+        </p><a class="btn primary" th:href="@{/documentos}">Ir a documentos</a><a class="btn"
+            th:href="@{/registros}">Registros guardados</a>
+    </main>
+</body>
+
+</html>

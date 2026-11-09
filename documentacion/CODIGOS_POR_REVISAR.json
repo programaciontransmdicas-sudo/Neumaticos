@@ -1,0 +1,74 @@
+{
+  "6379": [
+    {
+      "code": "6379",
+      "brand": "Hifly",
+      "model": "HH301",
+      "size": "11R22.5",
+      "retread1": "ZY2",
+      "retread2": ""
+    },
+    {
+      "code": "6379",
+      "brand": "Continental",
+      "model": "HSR2",
+      "size": "11R22.5",
+      "retread1": "",
+      "retread2": ""
+    }
+  ],
+  "0-1": [
+    {
+      "code": "0-1",
+      "brand": "HIFLI",
+      "model": "VIGORUS M/T",
+      "size": "245/70R16",
+      "retread1": "",
+      "retread2": ""
+    },
+    {
+      "code": "0-1",
+      "brand": "Hifly",
+      "model": "VIGORUS A/T",
+      "size": "265/60R18",
+      "retread1": "",
+      "retread2": ""
+    }
+  ],
+  "5974-": [
+    {
+      "code": "5974-",
+      "brand": "Good Year",
+      "model": "G665",
+      "size": "11R22.5",
+      "retread1": "",
+      "retread2": ""
+    },
+    {
+      "code": "5974-",
+      "brand": "Kumho",
+      "model": "KRS02",
+      "size": "11R22.5",
+      "retread1": "",
+      "retread2": ""
+    }
+  ],
+  "11453": [
+    {
+      "code": "11453",
+      "brand": "Zelda",
+      "model": "ZD-88",
+      "size": "11R22.5",
+      "retread1": "",
+      "retread2": ""
+    },
+    {
+      "code": "11453",
+      "brand": "Transtone",
+      "model": "TT768",
+      "size": "11R22.5",
+      "retread1": "",
+      "retread2": ""
+    }
+  ]
+}

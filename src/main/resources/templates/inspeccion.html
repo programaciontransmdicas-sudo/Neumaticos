@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Inspección | Transmdicas</title>
+
+    <style>
+        * { box-sizing: border-box; }
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f6f7fb;
+            color: #23283e;
+        }
+        header {
+            background: #171c35;
+            color: white;
+            padding: 20px 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        header a { color: #ddd8ff; }
+        main { max-width: 1400px; margin: 32px auto; padding: 0 24px; }
+        h1 { margin-bottom: 8px; }
+        .subtitulo { color: #697086; margin-bottom: 24px; }
+        .documentos { display: flex; gap: 12px; margin-bottom: 24px; }
+        .documentos span {
+            padding: 14px 20px;
+            border: 1px solid #dddfea;
+            border-radius: 10px;
+            background: white;
+        }
+        .documentos .activo {
+            background: #6555d8;
+            border-color: #6555d8;
+            color: white;
+        }
+        .panel {
+            background: white;
+            border: 1px solid #e5e7ef;
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 20px;
+        }
+        h2 { font-size: 19px; margin-top: 0; }
+        .campos {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 18px;
+        }
+        label { display: block; font-size: 13px; font-weight: bold; }
+        input, textarea, select {
+            width: 100%;
+            margin-top: 8px;
+            padding: 11px;
+            border: 1px solid #d9ddea;
+            border-radius: 8px;
+            font: inherit;
+            background: white;
+            color: #23283e;
+        }
+        input[readonly] {
+            background: #f0edff;
+            border-color: #ddd5ff;
+            color: #5444bb;
+        }
+        input[type="checkbox"] { width: 18px; height: 18px; }
+        .tabla { overflow-x: auto; }
+        table { width: 100%; border-collapse: collapse; min-width: 1050px; }
+        th {
+            background: #f6f7fb;
+            color: #697086;
+            text-align: left;
+            font-size: 12px;
+        }
+        th, td { padding: 10px 6px; border-bottom: 1px solid #edf0f5; }
+        td input, td select { margin: 0; min-width: 70px; }
+        td:nth-child(2) input { min-width: 130px; }
+        button {
+            border: 0;
+            border-radius: 9px;
+            background: #6555d8;
+            color: white;
+            padding: 14px 22px;
+            cursor: pointer;
+            font: inherit;
+        }
+        .aviso { color: #697086; font-size: 13px; line-height: 1.6; }
+        .error { color: #b42318; }
+        @media (max-width: 850px) {
+            .campos { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+            .documentos { flex-wrap: wrap; }
+        }
+        @media (max-width: 500px) {
+            .campos { grid-template-columns: 1fr; }
+            main { padding: 0 12px; }
+            .panel { padding: 16px; }
+        }
+    </style>
+</head>
+
+<body>
+<header>
+    <strong>TRANSMDICAS · Gestión de neumáticos</strong>
+    <a th:href="@{/}">Inicio</a>
+</header>
+
+<main>
+    <h1>Control de neumáticos</h1>
+    <p class="subtitulo">Inspección de unidad</p>
+    <p th:if="${mensajeExito}"
+   th:text="${mensajeExito}"
+   role="status"
+   style="padding:16px; background:#eaf8ef; color:#18643b; border-radius:10px;">
+</p>
+
+    <nav class="documentos" aria-label="Tipos de documento">
+        <span class="activo" aria-current="page">Inspección de unidad</span>
+        <span>Cambio de neumáticos · pendiente</span>
+        <span>Requerimiento · pendiente</span>
+    </nav>
+
+    <form th:action="@{/documentos/inspeccion/actualizar}"
+          th:object="${inspeccion}"
+          method="post">
+
+        <section class="panel">
+            <h2>Información general</h2>
+
+            <p class="aviso">
+                Blanco: ingreso manual.
+                Violeta: información automática.
+            </p>
+
+            <p class="error" th:if="${error}" th:text="${error}"></p>
+
+            <div class="campos">
+                <label>
+                    Placa
+                    <input th:field="*{placa}"
+                           maxlength="10"
+                           placeholder="Ej. ABC123"
+                           required>
+                </label>
+
+                <label>
+                    Operador
+                    <input th:field="*{operador}">
+                </label>
+
+                <label>
+                    Kilometraje
+                    <input type="number"
+                           th:field="*{kilometraje}"
+                           min="0"
+                           step="1">
+                </label>
+
+                <label>
+                    Fecha
+                    <input type="date" th:field="*{fecha}">
+                </label>
+            </div>
+
+            <p class="error"
+               th:if="${errorPlaca}"
+               th:text="${errorPlaca}"></p>
+        </section>
+
+        <section class="panel">
+            <h2>Datos automáticos de la unidad</h2>
+
+            <div class="campos">
+                <label>
+                    Marca
+                    <input readonly
+                           th:value="${unidad != null ? unidad.marca : ''}">
+                </label>
+
+                <label>
+                    Operación
+                    <input readonly
+                           th:value="${unidad != null ? unidad.operacion : ''}">
+                </label>
+
+                <label>
+                    Ruta
+                    <input readonly
+                           th:value="${unidad != null ? unidad.ruta : ''}">
+                </label>
+            </div>
+        </section>
+
+        <section class="panel">
+            <h2>Inspección de neumáticos · 10 posiciones</h2>
+
+            <div class="tabla">
+                <table>
+                    <thead>
+                    <tr>
+                        <th>Pos.</th>
+                        <th>Código interno</th>
+                        <th>R/N</th>
+                        <th>R1 · mm</th>
+                        <th>R2 · mm</th>
+                        <th>Prom. · mm</th>
+                        <th>Presión · PSI</th>
+                        <th>Aro C/M</th>
+                        <th>Estado</th>
+                        <th>Sin tapa</th>
+                    </tr>
+                    </thead>
+
+                    <tbody>
+                    <tr th:each="fila, indice : *{filas}">
+                        <td th:text="${indice.count}"></td>
+
+                        <td>
+                            <input
+                                th:field="*{filas[__${indice.index}__].codigo}">
+                        </td>
+
+                        <td>
+                            <select
+                                th:field="*{filas[__${indice.index}__].rn}">
+                                <option value="">—</option>
+                                <option value="N">N</option>
+                                <option value="R">R</option>
+                            </select>
+                        </td>
+
+                        <td>
+                            <input type="number" min="0" step="0.1"
+                                th:field="*{filas[__${indice.index}__].r1}">
+                        </td>
+
+                        <td>
+                            <input type="number" min="0" step="0.1"
+                                th:field="*{filas[__${indice.index}__].r2}">
+                        </td>
+
+                        <td>
+                            <input readonly th:value="${fila.promedio}">
+                        </td>
+
+                        <td>
+                            <input type="number" min="0" step="0.1"
+                                th:field="*{filas[__${indice.index}__].presion}">
+                        </td>
+
+                        <td>
+                            <select
+                                th:field="*{filas[__${indice.index}__].aro}">
+                                <option value="">—</option>
+                                <option value="C">C</option>
+                                <option value="M">M</option>
+                            </select>
+                        </td>
+
+                        <td>
+                            <input
+                                th:field="*{filas[__${indice.index}__].estado}">
+                        </td>
+
+                        <td>
+                            <input type="checkbox"
+                                th:field="*{filas[__${indice.index}__].sinTapa}">
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <section class="panel">
+            <h2>Observaciones</h2>
+            <textarea th:field="*{observaciones}"
+                      rows="4"
+                      placeholder="Escribe las observaciones de la inspección"></textarea>
+        </section>
+
+        <button type="submit">
+    Actualizar datos automáticos
+</button>
+
+<button type="submit"
+        th:formaction="@{/documentos/inspeccion/guardar}"
+        style="background:#171c35;">
+    Guardar borrador
+</button>
+
+<p class="aviso">
+    Puedes guardar campos pendientes.
+    Después de guardar se abrirá un formulario nuevo.
+</p>
+    </form>
+</main>
+</body>
+</html>

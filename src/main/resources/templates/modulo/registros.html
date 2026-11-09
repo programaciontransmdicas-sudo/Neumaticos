@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Registros guardados | Transmdicas</title>
+    <link rel="stylesheet" th:href="@{/css/modulo.css}">
+</head>
+
+<body>
+    <aside th:replace="~{modulo/layout :: sidebar}"></aside>
+    <div class="workspace">
+        <header th:replace="~{modulo/layout :: topbar}"></header>
+        <main>
+            <div class="heading">
+                <div><span class="eyebrow">MÓDULO DE MANTENIMIENTO</span>
+                    <h1>Registros guardados</h1>
+                    <p>Consulta, continúa e imprime los documentos guardados en el sistema.</p>
+                </div>
+                <div><a class="btn" th:href="@{/registros/exportar.csv}">↓ Exportar CSV</a><a class="btn primary"
+                        th:href="@{/documentos}">+ Nuevo documento</a></div>
+            </div>
+            <div th:replace="~{modulo/layout :: mensaje}"></div>
+            <section class="catalog">
+                <form class="catalog-toolbar" th:action="@{/registros}" method="get"><label
+                        class="search"><span>⌕</span><input name="q" th:value="${q}"
+                            placeholder="Buscar placa, operador, tipo, estado o número…"
+                            aria-label="Buscar registros"></label><button class="btn">Buscar</button><a class="btn"
+                        th:href="@{/registros}">Limpiar</a></form>
+                <div class="table-wrap">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>NÚMERO INTERNO</th>
+                                <th>FORMATO</th>
+                                <th>PLACA</th>
+                                <th>FECHA</th>
+                                <th>ESTADO</th>
+                                <th>ACCIONES</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="r : ${registros}">
+                                <td class="mono" th:text="${r.numero}"></td>
+                                <td th:text="${r.tipo.titulo}"></td>
+                                <td th:text="${r.placa}"></td>
+                                <td th:text="${r.fecha}"></td>
+                                <td><span class="badge" th:classappend="${r.estado == 'GENERADO'} ? 'green'"
+                                        th:text="${r.estado}"></span></td>
+                                <td class="row-actions"><a class="btn" th:href="@{/documentos/{id}(id=${r.id})}"
+                                        th:text="${r.estado == 'BORRADOR' ? 'Continuar' : 'Abrir'}"></a><a class="btn"
+                                        th:href="@{/documentos/{id}/vista(id=${r.id})}">Ver / imprimir</a><a
+                                        class="icon-btn danger" th:href="@{/documentos/{id}/eliminar(id=${r.id})}"
+                                        aria-label="Eliminar registro">×</a></td>
+                            </tr>
+                            <tr th:if="${#lists.isEmpty(registros)}">
+                                <td colspan="6" class="empty">
+                                    <h2>No hay registros para mostrar</h2>
+                                    <p>Guarda un borrador o cambia la búsqueda.</p>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+            <div th:replace="~{modulo/layout :: paginas('/registros')}"></div>
+        </main>
+    </div>
+</body>
+
+</html>

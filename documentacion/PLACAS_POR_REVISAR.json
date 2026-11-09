@@ -1,0 +1,42 @@
+{
+  "V9V867": [
+    {
+      "plate": "V9V867",
+      "trailer": "VDB978",
+      "operation": "Primax",
+      "route": "Pesca",
+      "brand": "MACK",
+      "model": "CXU613E",
+      "type": "tracto"
+    },
+    {
+      "plate": "V9V867",
+      "trailer": "VBG992",
+      "operation": "Industria",
+      "route": "San José",
+      "brand": "MACK",
+      "model": "CXU613E",
+      "type": "tracto"
+    }
+  ],
+  "V9E947": [
+    {
+      "plate": "V9E947",
+      "trailer": "VCB984",
+      "operation": "Industria",
+      "route": "Cargas Diversas",
+      "brand": "MACK",
+      "model": "CXU613E",
+      "type": "tracto"
+    },
+    {
+      "plate": "V9E947",
+      "trailer": "VCA986",
+      "operation": "Sin Operación",
+      "route": "Sin Cliente",
+      "brand": "MACK",
+      "model": "CXU613E",
+      "type": "tracto"
+    }
+  ]
+}

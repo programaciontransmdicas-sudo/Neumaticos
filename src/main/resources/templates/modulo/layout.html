@@ -1,0 +1,17 @@
+<!DOCTYPE html><html lang="es" xmlns:th="http://www.thymeleaf.org"><body>
+<aside class="sidebar" th:fragment="sidebar">
+ <a class="brand" th:href="@{/documentos}"><span class="brand-mark">T</span><span>TRANSMDICAS<small>GESTIÓN DE NEUMÁTICOS</small></span></a>
+ <p class="nav-label">MANTENIMIENTO</p>
+ <nav>
+  <a th:classappend="${nav == 'documentos'} ? 'active'" th:href="@{/documentos}"><span>▤</span> Documentos</a>
+  <a th:classappend="${nav == 'registros'} ? 'active'" th:href="@{/registros}"><span>◷</span> Registros guardados</a>
+  <a th:classappend="${nav == 'neumaticos'} ? 'active'" th:href="@{/catalogos/neumaticos}"><span>◎</span> Neumáticos</a>
+  <a th:classappend="${nav == 'flota'} ? 'active'" th:href="@{/catalogos/flota}"><span>▱</span> Flota de unidades</a>
+  <a th:classappend="${nav == 'reportes'} ? 'active'" th:href="@{/reportes}"><span>▥</span> Indicadores y reportes</a>
+ </nav>
+ <div class="sidebar-bottom"><a th:href="@{/reglas}">ⓘ Ver reglas de llenado</a><p>TRANSMDICAS<br><small>Módulo de mantenimiento</small></p></div>
+</aside>
+<header class="topbar" th:fragment="topbar"><span>Mantenimiento <b>/</b> Neumáticos</span><span class="badge green">● Sistema conectado</span></header>
+<div th:fragment="mensaje" class="notice success" th:if="${mensaje}" th:text="${mensaje}" role="status"></div>
+<div class="pagination" th:fragment="paginas(ruta)"><span th:text="|${total} resultados · página ${pagina + 1}|"></span><div><a class="btn" th:if="${pagina > 0}" th:href="@{${ruta}(q=${q},pagina=${pagina - 1})}">Anterior</a><a class="btn" th:if="${(pagina + 1) * 25 < total}" th:href="@{${ruta}(q=${q},pagina=${pagina + 1})}">Siguiente</a></div></div>
+</body></html>
