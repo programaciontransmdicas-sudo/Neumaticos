@@ -1,6 +1,10 @@
 {
   "rewrites": [
     {
+      "source": "/",
+      "destination": "https://neumaticos-zkui.onrender.com/documentos"
+    },
+    {
       "source": "/:path*",
       "destination": "https://neumaticos-zkui.onrender.com/:path*"
     }
